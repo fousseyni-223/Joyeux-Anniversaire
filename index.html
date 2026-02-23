@@ -12,15 +12,7 @@ body{
   text-align:center;
   color:purple;
   font-family:Arial;
-  .photo-top-right{
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 220px;        
-  border-radius: 12px;
-  z-index: 5;        
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
+  
 }
 
 .container{
@@ -42,7 +34,6 @@ button{
   border-radius:10px;
   cursor:pointer;
 }
-<img src="image0.png" alt="Photo" class="photo-top-right">
 canvas{
   position:absolute;
   top:0;
@@ -60,11 +51,20 @@ canvas{
   from{ transform:translateY(-10vh); }
   to{ transform:translateY(110vh); }
 }
+  .photo-top-right{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 220px;        
+  border-radius: 12px;
+  z-index: 5;        
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 
 <body>
-
+<img src="image0.png" alt="Photo" class="photo-top-right">
 <canvas id="fireworks"></canvas>
 
 <div class="container">
@@ -173,6 +173,7 @@ function startShow(){
 
 </body>
 </html>
+
 
 
 
