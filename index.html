@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HAPPY BIRTHDAY ❤️</title>
+
+<style>
+body{
+margin:0;
+overflow:hidden;
+background: linear-gradient(to right, #ff758c, #ff7eb3);
+text-align:center;
+color:purple;
+font-family:Arial;
+}
+
+.container{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:2;
+}
+
+h1{
+font-size:45px;
+}
+
+button{
+padding:15px 25px;
+font-size:20px;
+border:none;
+background:white;
+color:#ff4e88;
+border-radius:10px;
+cursor:pointer;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+z-index:1;
+}
+
+.emoji{
+position:absolute;
+font-size:35px;
+animation: fall linear forwards;
+}
+
+@keyframes fall{
+0%{transform:translateY(-10vh);}
+100%{transform:translateY(110vh);}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+<h1>🎉Joyeux Anniversaire Chérieeeeeeeeeee🎂❤️</h1>
+<p>Que cette journée soit magique ✨</p>
+<button onclick="startSecondFireworks()">Clique ici 💘</button>
+</div>
+
+<audio id="music" loop>
+<source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mp3">
+</audio>
+
+<script>
+let canvas = document.getElementById("fireworks");
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function explode(x,y){
+for(let i=0;i<80;i++){
+ctx.beginPath();
+ctx.arc(x + Math.random()*100-50, y + Math.random()*100-50, 3, 0, Math.PI*2);
+ctx.fillStyle = "hsl("+Math.random()*360+",100%,60%)";
+ctx.fill();
+}
+}
+
+// 🎂 Feu d'artifice automatique à l'ouverture
+window.onload = function(){
+setTimeout(()=>{
+explode(canvas.width/2, canvas.height/3);
+},500);
+};
+
+// 💘 Deuxième animation au clic
+function startSecondFireworks(){
+document.getElementById("music").play();
+
+// Nouveau feu d’artifice
+setInterval(()=>{
+explode(Math.random()*canvas.width, Math.random()*canvas.height/2);
+},600);
+
+// Pluie d'emojis
+let emojis = ["🎈","🎁","🎊","🎉","❤️","🫶🏽"];
+for(let i=0;i<40;i++){
+let e = document.createElement("div");
+e.className="emoji";
+e.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+e.style.left = Math.random()*100+"vw";
+e.style.animationDuration = (Math.random()*3+2)+"s";
+document.body.appendChild(e);
+}
+}
+</script>
+
+</body>
+</html>
