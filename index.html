@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta charset="UTF-8">
 <title>HAPPY BIRTHDAY ❤️</title>
 
 <style>
@@ -21,9 +22,7 @@ body{
   z-index:2;
 }
 
-h1{
-  font-size:45px;
-}
+h1{ font-size:45px; }
 
 button{
   padding:15px 25px;
@@ -44,13 +43,13 @@ canvas{
 
 .emoji{
   position:absolute;
-  font-size:35px;
+  font-size:32px;
   animation: fall linear forwards;
 }
 
 @keyframes fall{
-  0%{transform:translateY(-10vh);}
-  100%{transform:translateY(110vh);}
+  from{ transform:translateY(-10vh); }
+  to{ transform:translateY(110vh); }
 }
 </style>
 </head>
@@ -60,76 +59,104 @@ canvas{
 <canvas id="fireworks"></canvas>
 
 <div class="container">
-  <h1><i>🎉🎂 Joyeux Anniversaire Chérieeeeeeeeeee 🎂❤️</i></h1>
-  <p>Que cette journée soit remplie de joie 🥳🥳 Enjoy your Day 🌹✨</p>
-  <h2>😍😍 Tu comptes énormément pour moi 💋❤️</h2>
-  <h3>🫠💋 T'es une personne magnifique 🫶🏼 avec un ❤️ en or</h3>
-  <h2>❤️❤️❤️❤️❤️❤️ BISOUS 😘😘😘😘😘😘😘</h2>
-  <button onclick="startSecondFireworks()">Clique ici 💘</button>
+  <h1>🎉🎂 Joyeux Anniversaire Chérie 🎂❤️</h1>
+  <p>Que cette journée soit magique ✨🌹</p>
+  <h2>😍 Tu comptes énormément pour moi ❤️</h2>
+  <button onclick="startShow()">Clique ici 💘</button>
 </div>
 
-<!-- 🎶 MUSIQUE DOUCE -->
-<audio id="music" preload="auto" loop>
+<!-- 🎶 MUSIQUE -->
+<audio id="music" loop>
   <source src="https://cdn.pixabay.com/download/audio/2022/10/18/audio_f2c88cce61.mp3" type="audio/mp3">
 </audio>
 
 <script>
-/* 🎆 CANVAS */
-let canvas = document.getElementById("fireworks");
-let ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+/* ================= CANVAS ================= */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-/* 🎶 MUSIQUE */
-let music = document.getElementById("music");
-music.volume = 0.5; // volume doux mais audible
+/* ================= MUSIQUE ================= */
+const music = document.getElementById("music");
+music.volume = 0.6;
 
-/* 💥 FEU D’ARTIFICE */
-function explode(x, y){
+/* ================= FEUX STYLE SOLITAIRE ================= */
+let rockets = [];
+let particles = [];
+
+function launchRocket(){
+  rockets.push({
+    x: Math.random() * canvas.width,
+    y: canvas.height,
+    speed: Math.random()*3 + 5,
+    color: `hsl(${Math.random()*360},100%,60%)`
+  });
+}
+
+function explode(x,y,color){
   for(let i=0;i<80;i++){
-    ctx.beginPath();
-    ctx.arc(
-      x + Math.random()*100 - 50,
-      y + Math.random()*100 - 50,
-      3,
-      0,
-      Math.PI * 2
-    );
-    ctx.fillStyle = "hsl(" + Math.random()*360 + ",100%,60%)";
-    ctx.fill();
+    particles.push({
+      x:x,
+      y:y,
+      vx: Math.cos(i) * (Math.random()*4),
+      vy: Math.sin(i) * (Math.random()*4),
+      life: 60,
+      color: color
+    });
   }
 }
 
-/* 🎂 FEU AUTOMATIQUE AU CHARGEMENT */
-window.onload = () => {
-  setTimeout(() => {
-    explode(canvas.width/2, canvas.height/3);
-  }, 500);
-};
+function animateFireworks(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-/* 💘 AU CLIC */
-function startSecondFireworks(){
+  rockets.forEach((r, i) => {
+    r.y -= r.speed;
+    ctx.fillStyle = r.color;
+    ctx.fillRect(r.x, r.y, 3, 10);
 
-  /* ▶️ LECTURE MUSIQUE (OBLIGATOIRE AVEC CLIC) */
-  music.play().catch(err => {
-    console.log("Lecture audio bloquée :", err);
+    if(r.y < canvas.height * 0.3){
+      explode(r.x, r.y, r.color);
+      rockets.splice(i,1);
+    }
   });
 
-  /* 🎆 FEUX EN CONTINU */
-  setInterval(() => {
-    explode(Math.random()*canvas.width, Math.random()*canvas.height/2);
-  }, 600);
+  particles.forEach((p,i)=>{
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x,p.y,3,3);
+    if(p.life <= 0) particles.splice(i,1);
+  });
 
-  /* 🌧️ PLUIE D’EMOJIS */
-  let emojis = ["HBD","😍","🥰","😘","🎈","🎁","🎊","🎉","❤️","🫶🏽","🥳","🌹","💋","I❤️U","🎂"];
-  for(let i=0;i<40;i++){
-    let e = document.createElement("div");
-    e.className = "emoji";
-    e.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
-    e.style.left = Math.random()*100 + "vw";
-    e.style.animationDuration = (Math.random()*3 + 2) + "s";
-    document.body.appendChild(e);
-  }
+  requestAnimationFrame(animateFireworks);
+}
+
+/* ================= EMOJIS INFINIS ================= */
+function dropEmoji(){
+  const emojis = ["🎉","🎂","❤️","😍","🥰","😘","🎁","🌹","💋","I❤️U","🥳"];
+  const e = document.createElement("div");
+  e.className = "emoji";
+  e.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left = Math.random()*100 + "vw";
+  e.style.animationDuration = (Math.random()*3 + 3) + "s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),7000);
+}
+
+/* ================= DÉMARRAGE AU CLIC ================= */
+function startShow(){
+
+  // 🎶 MUSIQUE (débloquée par clic)
+  music.play().catch(()=>{});
+
+  // 🎆 FEUX STYLE SOLITAIRE INFINIS
+  setInterval(launchRocket, 600);
+  animateFireworks();
+
+  // 🌧️ ÉMOJIS QUI TOMBENT SANS ARRÊT
+  setInterval(dropEmoji, 300);
 }
 </script>
 
